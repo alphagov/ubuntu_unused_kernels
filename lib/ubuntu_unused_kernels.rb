@@ -9,7 +9,10 @@ module UbuntuUnusedKernels
       current = get_current
 
       PACKAGE_PREFIXES.each do |prefix|
-        latest = packages.select { |package| package.start_with?(prefix) }.last
+        latest = packages.sort.select { |package|
+          package.start_with?(prefix)
+        }.last
+
         packages.delete(latest)
         packages.delete("#{prefix}-#{current}")
       end
