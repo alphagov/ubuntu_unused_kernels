@@ -6,10 +6,12 @@ module UbuntuUnusedKernels
   class << self
     def to_remove
       packages = get_installed
+      current = get_current
 
       PACKAGE_PREFIXES.each do |prefix|
         latest = packages.select { |package| package.start_with?(prefix) }.last
         packages.delete(latest)
+        packages.delete("#{prefix}-#{current}")
       end
 
       return packages
