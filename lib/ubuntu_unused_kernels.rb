@@ -23,7 +23,10 @@ module UbuntuUnusedKernels
     end
 
     def get_current
-      return '', ''
+      uname = Open3.capture2('uname', '-r').first.chomp
+      match = uname.match(/^(#{KERNEL_VERSION})-([[:alpha:]]+)$/)
+
+      return match[1], match[2]
     end
 
     def get_installed(suffix)
