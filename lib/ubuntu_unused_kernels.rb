@@ -23,8 +23,11 @@ module UbuntuUnusedKernels
     end
 
     def get_current
-      uname = Open3.capture2('uname', '-r').first.chomp
-      match = uname.match(/^(#{KERNEL_VERSION})-([[:alpha:]]+)$/)
+      uname = Open3.capture2('uname', '-r')
+      raise "Unable to determine current kernel" unless uname.last.success?
+
+      match = uname.first.chomp.match(/^(#{KERNEL_VERSION})-([[:alpha:]]+)$/)
+      raise "Unable to determine current kernel" unless match
 
       return match[1], match[2]
     end
