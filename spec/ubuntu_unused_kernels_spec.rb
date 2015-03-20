@@ -88,4 +88,52 @@ describe UbuntuUnusedKernels do
       end
     end
   end
+
+  describe 'get_current' do
+    describe 'normal operation' do
+      it 'should return version and suffix' do
+        allow(Open3).to receive(:capture2).with('uname', '-r').and_return(
+          Open3.capture2('echo', '3.13.0-43-generic')
+        )
+
+        expect(subject.get_current).to eq(['3.13.0-43', 'generic'])
+      end
+    end
+
+    describe 'unable to parse version' do
+      it 'should raise exception' do
+        allow(Open3).to receive(:capture2).with('uname', '-r').and_return(
+          Open3.capture2('echo', '123-generic')
+        )
+
+        expect { subject.get_current }.to raise_error(
+          RuntimeError, "Unable to determine current kernel"
+        )
+      end
+    end
+
+    describe 'unable to parse suffix' do
+      it 'should raise an exception' do
+        allow(Open3).to receive(:capture2).with('uname', '-r').and_return(
+          Open3.capture2('echo', '3.13.0-43')
+        )
+
+        expect { subject.get_current }.to raise_error(
+          RuntimeError, "Unable to determine current kernel"
+        )
+      end
+    end
+
+    describe 'command returns correct output but non-zero exit code' do
+      it 'should raise exception' do
+        allow(Open3).to receive(:capture2).with('uname', '-r').and_return(
+          Open3.capture2('bash', '-c', 'echo 3.13.0-43-generic; exit 1')
+        )
+
+        expect { subject.get_current }.to raise_error(
+          RuntimeError, "Unable to determine current kernel"
+        )
+      end
+    end
+  end
 end

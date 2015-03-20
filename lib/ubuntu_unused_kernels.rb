@@ -1,4 +1,5 @@
 require "ubuntu_unused_kernels/version"
+require "open3"
 
 module UbuntuUnusedKernels
   PACKAGE_PREFIXES = %w{linux-image linux-headers}
