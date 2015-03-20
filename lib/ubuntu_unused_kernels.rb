@@ -33,7 +33,16 @@ module UbuntuUnusedKernels
     end
 
     def get_installed(suffix)
-      return []
+      args = PACKAGE_PREFIXES.collect { |prefix|
+        "#{prefix}-*-#{suffix}"
+      }
+      dpkg = Open3.capture2(
+        'dpkg-query', '--show',
+        '--showformat', '${Package}\n',
+        *args
+      ).first.split("\n")
+
+      return packages
     end
   end
 end
