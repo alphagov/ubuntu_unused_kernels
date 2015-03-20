@@ -6,10 +6,12 @@ describe UbuntuUnusedKernels do
   end
 
   describe 'to_remove' do
+    let(:suffix) { 'generic' }
+
     describe 'one kernel installed, is current and latest' do
       it 'should return nothing' do
-        allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-43-generic')
-        allow(subject).to receive(:get_installed).with(no_args).and_return(%w{
+        allow(subject).to receive(:get_current).with(no_args).and_return(['3.13.0-43', suffix])
+        allow(subject).to receive(:get_installed).with(suffix).and_return(%w{
           linux-image-3.13.0-43-generic
           linux-headers-3.13.0-43-generic
         })
@@ -34,8 +36,11 @@ describe UbuntuUnusedKernels do
 
       describe 'current is latest' do
         it 'should return everything except current/latest' do
-          allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-43-generic')
-          allow(subject).to receive(:get_installed).with(no_args).and_return(installed)
+          allow(subject).to receive(:get_current).with(no_args).and_return(['3.13.0-43', suffix])
+          allow(subject).to receive(:get_installed).with(suffix).and_return(installed)
+
+          expect(subject.to_remove).to match_array(%w{
+            linux-image-3.13.0-39-generic
 
           expect(subject.to_remove).to match_array(%w{
             linux-image-3.13.0-39-generic
@@ -52,8 +57,8 @@ describe UbuntuUnusedKernels do
 
       describe 'current is not latest' do
         it 'should return everything except current and latest' do
-          allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-41-generic')
-          allow(subject).to receive(:get_installed).with(no_args).and_return(installed)
+          allow(subject).to receive(:get_current).with(no_args).and_return(['3.13.0-41', suffix])
+          allow(subject).to receive(:get_installed).with(suffix).and_return(installed)
 
           expect(subject.to_remove).to match_array(%w{
             linux-image-3.13.0-39-generic
@@ -68,8 +73,8 @@ describe UbuntuUnusedKernels do
 
       describe 'unsorted list of kernels' do
         it 'should return everything except current and latest' do
-          allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-41-generic')
-          allow(subject).to receive(:get_installed).with(no_args).and_return(installed.shuffle)
+          allow(subject).to receive(:get_current).with(no_args).and_return(['3.13.0-41', suffix])
+          allow(subject).to receive(:get_installed).with(suffix).and_return(installed.shuffle)
 
           expect(subject.to_remove).to match_array(%w{
             linux-image-3.13.0-39-generic

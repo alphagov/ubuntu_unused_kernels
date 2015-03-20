@@ -2,30 +2,31 @@ require "ubuntu_unused_kernels/version"
 
 module UbuntuUnusedKernels
   PACKAGE_PREFIXES = %w{linux-image linux-headers}
+  KERNEL_VERSION = %r{\d+\.\d+\.\d+-\d+}
 
   class << self
     def to_remove
-      packages = get_installed
-      current = get_current
+      current, suffix = get_current
+      packages = get_installed(suffix)
 
       PACKAGE_PREFIXES.each do |prefix|
         latest = packages.sort.select { |package|
-          package.start_with?(prefix)
+          package =~ /^#{prefix}-#{KERNEL_VERSION}-#{suffix}$/
         }.last
 
         packages.delete(latest)
-        packages.delete("#{prefix}-#{current}")
+        packages.delete("#{prefix}-#{current}-#{suffix}")
       end
 
       return packages
     end
 
-    def get_installed
-      return []
+    def get_current
+      return '', ''
     end
 
-    def get_current
-      return ''
+    def get_installed(suffix)
+      return []
     end
   end
 end
