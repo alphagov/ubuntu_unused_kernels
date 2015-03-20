@@ -136,4 +136,85 @@ describe UbuntuUnusedKernels do
       end
     end
   end
+
+  describe 'get_installed' do
+    describe 'three kernels installed with suffix "generic"' do
+      let(:installed) { <<EOS
+linux-image-3.13.0-41-generic
+linux-image-3.13.0-42-generic
+linux-image-3.13.0-43-generic
+linux-headers-3.13.0-41-generic
+linux-headers-3.13.0-42-generic
+linux-headers-3.13.0-43-generic
+EOS
+      }
+
+      it 'should return an array of six packages' do
+        allow(Open3).to receive(:capture2).with(
+          'dpkg-query', '--show',
+          '--showformat', '${Package}\n',
+          'linux-image-*-generic', 'linux-headers-*-generic',
+        ).and_return(
+          Open3.capture2('echo', installed)
+        )
+
+        expect(subject.get_installed('generic')).to match_array(%w{
+          linux-image-3.13.0-41-generic
+          linux-image-3.13.0-42-generic
+          linux-image-3.13.0-43-generic
+          linux-headers-3.13.0-41-generic
+          linux-headers-3.13.0-42-generic
+          linux-headers-3.13.0-43-generic
+        })
+      end
+    end
+
+    describe 'no kernels installed with suffix "generic"' do
+      it 'should raise an exception because current or latest should be present' do
+        allow(Open3).to receive(:capture2).with(any_args).and_return(
+          Open3.capture2('echo')
+        )
+
+        expect { subject.get_installed('generic') }.to raise_error(
+          RuntimeError, "No kernel packages found for prefix"
+        )
+      end
+    end
+
+    describe 'command returns non-zero exit code' do
+      it 'should raise an exception' do
+        allow(Open3).to receive(:capture2).with(any_args).and_return(
+          Open3.capture2('bash', '-c', 'echo foo; exit 1')
+        )
+
+        expect { subject.get_installed('generic') }.to raise_error(
+          RuntimeError, "Unable to get list of packages"
+        )
+      end
+    end
+
+    describe 'empty suffix' do
+      it 'should raise an exception' do
+        allow(Open3).to receive(:capture2).with(any_args).and_return(
+          Open3.capture2('echo')
+        )
+
+        expect { subject.get_installed('') }.to raise_error(
+          RuntimeError, "Suffix argument must not be empty or nil"
+        )
+      end
+    end
+
+    describe 'nil suffix' do
+      it 'should raise an exception' do
+        allow(Open3).to receive(:capture2).with(any_args).and_return(
+          Open3.capture2('echo')
+        )
+
+        expect { subject.get_installed(nil) }.to raise_error(
+          RuntimeError, "Suffix argument must not be empty or nil"
+        )
+      end
+    end
+  end
 end
