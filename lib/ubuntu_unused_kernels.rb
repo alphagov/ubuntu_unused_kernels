@@ -33,6 +33,10 @@ module UbuntuUnusedKernels
     end
 
     def get_installed(suffix)
+      if suffix.nil? or suffix.empty?
+        raise "Suffix argument must not be empty or nil"
+      end
+
       args = PACKAGE_PREFIXES.collect { |prefix|
         "#{prefix}-*-#{suffix}"
       }
@@ -40,7 +44,11 @@ module UbuntuUnusedKernels
         'dpkg-query', '--show',
         '--showformat', '${Package}\n',
         *args
-      ).first.split("\n")
+      )
+      raise "Unable to get list of packages" unless dpkg.last.success?
+
+      packages = dpkg.first.split("\n")
+      raise "No kernel packages found for prefix" if packages.empty?
 
       return packages
     end
