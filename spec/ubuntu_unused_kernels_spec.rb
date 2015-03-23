@@ -12,8 +12,8 @@ describe UbuntuUnusedKernels do
       it 'should return nothing' do
         allow(subject).to receive(:get_current).with(no_args).and_return(['3.13.0-43', suffix])
         allow(subject).to receive(:get_installed).with(suffix).and_return(%w{
-          linux-image-3.13.0-43-generic
           linux-headers-3.13.0-43-generic
+          linux-image-3.13.0-43-generic
         })
 
         expect(subject.to_remove).to eq([])
@@ -22,16 +22,16 @@ describe UbuntuUnusedKernels do
 
     describe 'five kernels installed' do
       let(:installed) { %w{
-        linux-image-3.13.0-39-generic
-        linux-image-3.13.0-40-generic
-        linux-image-3.13.0-41-generic
-        linux-image-3.13.0-42-generic
-        linux-image-3.13.0-43-generic
         linux-headers-3.13.0-39-generic
         linux-headers-3.13.0-40-generic
         linux-headers-3.13.0-41-generic
         linux-headers-3.13.0-42-generic
         linux-headers-3.13.0-43-generic
+        linux-image-3.13.0-39-generic
+        linux-image-3.13.0-40-generic
+        linux-image-3.13.0-41-generic
+        linux-image-3.13.0-42-generic
+        linux-image-3.13.0-43-generic
       }}
 
       describe 'current is latest' do
@@ -40,17 +40,14 @@ describe UbuntuUnusedKernels do
           allow(subject).to receive(:get_installed).with(suffix).and_return(installed)
 
           expect(subject.to_remove).to match_array(%w{
-            linux-image-3.13.0-39-generic
-
-          expect(subject.to_remove).to match_array(%w{
-            linux-image-3.13.0-39-generic
-            linux-image-3.13.0-40-generic
-            linux-image-3.13.0-41-generic
-            linux-image-3.13.0-42-generic
             linux-headers-3.13.0-39-generic
             linux-headers-3.13.0-40-generic
             linux-headers-3.13.0-41-generic
             linux-headers-3.13.0-42-generic
+            linux-image-3.13.0-39-generic
+            linux-image-3.13.0-40-generic
+            linux-image-3.13.0-41-generic
+            linux-image-3.13.0-42-generic
           })
         end
       end
@@ -61,12 +58,12 @@ describe UbuntuUnusedKernels do
           allow(subject).to receive(:get_installed).with(suffix).and_return(installed)
 
           expect(subject.to_remove).to match_array(%w{
-            linux-image-3.13.0-39-generic
-            linux-image-3.13.0-40-generic
-            linux-image-3.13.0-42-generic
             linux-headers-3.13.0-39-generic
             linux-headers-3.13.0-40-generic
             linux-headers-3.13.0-42-generic
+            linux-image-3.13.0-39-generic
+            linux-image-3.13.0-40-generic
+            linux-image-3.13.0-42-generic
           })
         end
       end
@@ -77,12 +74,12 @@ describe UbuntuUnusedKernels do
           allow(subject).to receive(:get_installed).with(suffix).and_return(installed.shuffle)
 
           expect(subject.to_remove).to match_array(%w{
-            linux-image-3.13.0-39-generic
-            linux-image-3.13.0-40-generic
-            linux-image-3.13.0-42-generic
             linux-headers-3.13.0-39-generic
             linux-headers-3.13.0-40-generic
             linux-headers-3.13.0-42-generic
+            linux-image-3.13.0-39-generic
+            linux-image-3.13.0-40-generic
+            linux-image-3.13.0-42-generic
           })
         end
       end
@@ -140,12 +137,12 @@ describe UbuntuUnusedKernels do
   describe 'get_installed' do
     describe 'three kernels installed with suffix "generic"' do
       let(:installed) { <<EOS
-linux-image-3.13.0-41-generic
-linux-image-3.13.0-42-generic
-linux-image-3.13.0-43-generic
 linux-headers-3.13.0-41-generic
 linux-headers-3.13.0-42-generic
 linux-headers-3.13.0-43-generic
+linux-image-3.13.0-41-generic
+linux-image-3.13.0-42-generic
+linux-image-3.13.0-43-generic
 EOS
       }
 
@@ -159,12 +156,12 @@ EOS
         )
 
         expect(subject.get_installed('generic')).to match_array(%w{
-          linux-image-3.13.0-41-generic
-          linux-image-3.13.0-42-generic
-          linux-image-3.13.0-43-generic
           linux-headers-3.13.0-41-generic
           linux-headers-3.13.0-42-generic
           linux-headers-3.13.0-43-generic
+          linux-image-3.13.0-41-generic
+          linux-image-3.13.0-42-generic
+          linux-image-3.13.0-43-generic
         })
       end
     end
