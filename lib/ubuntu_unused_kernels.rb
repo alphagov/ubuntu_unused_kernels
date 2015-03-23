@@ -3,7 +3,8 @@ require "open3"
 
 module UbuntuUnusedKernels
   PACKAGE_PREFIXES = %w{linux-image linux-headers}
-  KERNEL_VERSION = %r{\d+\.\d+\.\d+-\d+}
+  VERSION_GLOB = '*.*.*-*'
+  VERSION_REGEX = %r{\d+\.\d+\.\d+-\d+}
 
   class << self
     def to_remove
@@ -12,7 +13,7 @@ module UbuntuUnusedKernels
 
       PACKAGE_PREFIXES.each do |prefix|
         latest = packages.sort.select { |package|
-          package =~ /^#{prefix}-#{KERNEL_VERSION}-#{suffix}$/
+          package =~ /^#{prefix}-#{VERSION_REGEX}-#{suffix}$/
         }.last
 
         packages.delete(latest)
@@ -26,19 +27,15 @@ module UbuntuUnusedKernels
       uname = Open3.capture2('uname', '-r')
       raise "Unable to determine current kernel" unless uname.last.success?
 
-      match = uname.first.chomp.match(/^(#{KERNEL_VERSION})-[[:alpha:]]+$/)
+      match = uname.first.chomp.match(/^(#{VERSION_REGEX})-[[:alpha:]]+$/)
       raise "Unable to determine current kernel" unless match
 
       return match[1]
     end
 
-    def get_installed(suffix)
-      if suffix.nil? or suffix.empty?
-        raise "Suffix argument must not be empty or nil"
-      end
-
+    def get_installed
       args = PACKAGE_PREFIXES.collect { |prefix|
-        "#{prefix}-*-#{suffix}"
+        "#{prefix}-#{VERSION_GLOB}"
       }
       dpkg = Open3.capture2(
         'dpkg-query', '--show',
@@ -48,7 +45,7 @@ module UbuntuUnusedKernels
       raise "Unable to get list of packages" unless dpkg.last.success?
 
       packages = dpkg.first.split("\n")
-      raise "No kernel packages found for prefix" if packages.empty?
+      raise "No kernel packages found" if packages.empty?
 
       return packages
     end
