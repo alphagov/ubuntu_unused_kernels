@@ -26,10 +26,10 @@ module UbuntuUnusedKernels
       uname = Open3.capture2('uname', '-r')
       raise "Unable to determine current kernel" unless uname.last.success?
 
-      match = uname.first.chomp.match(/^(#{KERNEL_VERSION})-([[:alpha:]]+)$/)
+      match = uname.first.chomp.match(/^(#{KERNEL_VERSION})-[[:alpha:]]+$/)
       raise "Unable to determine current kernel" unless match
 
-      return match[1], match[2]
+      return match[1]
     end
 
     def get_installed(suffix)
