@@ -8,17 +8,17 @@ module UbuntuUnusedKernels
 
   class << self
     def to_remove
-      current, suffix = get_current
-      packages = get_installed(suffix)
+      current = get_current
+      packages = get_installed
 
-      PACKAGE_PREFIXES.each do |prefix|
-        latest = packages.sort.select { |package|
-          package =~ /^#{prefix}-#{VERSION_REGEX}-#{suffix}$/
-        }.last
+      latest = packages.map { |package|
+        package.match(VERSION_REGEX)[0]
+      }.sort.last
 
-        packages.delete(latest)
-        packages.delete("#{prefix}-#{current}-#{suffix}")
-      end
+      packages.reject! { |package|
+        package =~ /\b#{Regexp.escape(current)}\b/ ||
+        package =~ /\b#{Regexp.escape(latest)}\b/
+      }
 
       return packages
     end
