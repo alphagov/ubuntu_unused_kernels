@@ -150,24 +150,30 @@ describe UbuntuUnusedKernels do
 
   describe 'get_installed' do
     describe 'three kernels fully and one partially installed' do
+      # Beware, hardtabs, including trailing.
       let(:installed) { <<EOS
+linux-headers-3.0	
 linux-headers-3.13.0-29	3.13.0-29.53
 linux-headers-3.13.0-29-generic	3.13.0-29.53
 linux-headers-3.13.0-45	
 linux-headers-3.13.0-45-generic	
 linux-headers-3.13.0-46	3.13.0-46.79
 linux-headers-3.13.0-46-generic	3.13.0-46.79
+linux-headers-generic	3.13.0.46.53
+linux-headers-virtual	3.13.0.46.53
+linux-image-3.0	
 linux-image-3.13.0-29-generic	3.13.0-29.53
 linux-image-3.13.0-45-generic	3.13.0-45.74
 linux-image-3.13.0-46-generic	3.13.0-46.79
+linux-image-virtual	3.13.0.46.53
 EOS
       }
 
-      it 'should return an array of seven packages' do
+      it 'should return non-meta packages that have an installed version' do
         allow(Open3).to receive(:capture2).with(
           'dpkg-query', '--show',
           '--showformat', '${Package}\t${Version}\n',
-          'linux-image-*.*.*-*', 'linux-headers-*.*.*-*',
+          'linux-image-*', 'linux-headers-*',
         ).and_return(
           Open3.capture2('echo', installed)
         )

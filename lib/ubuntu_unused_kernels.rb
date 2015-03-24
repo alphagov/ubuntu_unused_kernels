@@ -2,8 +2,7 @@ require "ubuntu_unused_kernels/version"
 require "open3"
 
 module UbuntuUnusedKernels
-  PACKAGE_PREFIXES = %w{linux-image linux-headers}
-  VERSION_GLOB = '*.*.*-*'
+  DPKG_PATTERN = %w{linux-image-* linux-headers-*}
   VERSION_REGEX = %r{\d+\.\d+\.\d+-\d+}
 
   class << self
@@ -34,13 +33,10 @@ module UbuntuUnusedKernels
     end
 
     def get_installed
-      args = PACKAGE_PREFIXES.collect { |prefix|
-        "#{prefix}-#{VERSION_GLOB}"
-      }
       dpkg = Open3.capture2(
         'dpkg-query', '--show',
         '--showformat', '${Package}\t${Version}\n',
-        *args
+        *DPKG_PATTERN
       )
       raise "Unable to get list of packages" unless dpkg.last.success?
 
