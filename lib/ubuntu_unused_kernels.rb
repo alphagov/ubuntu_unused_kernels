@@ -39,12 +39,16 @@ module UbuntuUnusedKernels
       }
       dpkg = Open3.capture2(
         'dpkg-query', '--show',
-        '--showformat', '${Package}\n',
+        '--showformat', '${Package}\t${Version}\n',
         *args
       )
       raise "Unable to get list of packages" unless dpkg.last.success?
 
       packages = dpkg.first.split("\n")
+      packages.map! { |p| p.split("\t") }
+      packages.reject! { |p| p[1].nil? }
+      packages.map! { |p| p[0] }
+      packages.reject! { |p| p !~ VERSION_REGEX }
       raise "No kernel packages found" if packages.empty?
 
       return packages

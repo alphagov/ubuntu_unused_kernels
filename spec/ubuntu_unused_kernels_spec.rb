@@ -149,39 +149,37 @@ describe UbuntuUnusedKernels do
   end
 
   describe 'get_installed' do
-    describe 'three kernels installed' do
+    describe 'three kernels fully and one partially installed' do
       let(:installed) { <<EOS
-linux-headers-3.13.0-41
-linux-headers-3.13.0-41-generic
-linux-headers-3.13.0-42
-linux-headers-3.13.0-42-generic
-linux-headers-3.13.0-43
-linux-headers-3.13.0-43-generic
-linux-image-3.13.0-41-generic
-linux-image-3.13.0-42-generic
-linux-image-3.13.0-43-generic
+linux-headers-3.13.0-29	3.13.0-29.53
+linux-headers-3.13.0-29-generic	3.13.0-29.53
+linux-headers-3.13.0-45	
+linux-headers-3.13.0-45-generic	
+linux-headers-3.13.0-46	3.13.0-46.79
+linux-headers-3.13.0-46-generic	3.13.0-46.79
+linux-image-3.13.0-29-generic	3.13.0-29.53
+linux-image-3.13.0-45-generic	3.13.0-45.74
+linux-image-3.13.0-46-generic	3.13.0-46.79
 EOS
       }
 
-      it 'should return an array of six packages' do
+      it 'should return an array of seven packages' do
         allow(Open3).to receive(:capture2).with(
           'dpkg-query', '--show',
-          '--showformat', '${Package}\n',
+          '--showformat', '${Package}\t${Version}\n',
           'linux-image-*.*.*-*', 'linux-headers-*.*.*-*',
         ).and_return(
           Open3.capture2('echo', installed)
         )
 
         expect(subject.get_installed()).to match_array(%w{
-          linux-headers-3.13.0-41
-          linux-headers-3.13.0-41-generic
-          linux-headers-3.13.0-42
-          linux-headers-3.13.0-42-generic
-          linux-headers-3.13.0-43
-          linux-headers-3.13.0-43-generic
-          linux-image-3.13.0-41-generic
-          linux-image-3.13.0-42-generic
-          linux-image-3.13.0-43-generic
+          linux-headers-3.13.0-29
+          linux-headers-3.13.0-29-generic
+          linux-headers-3.13.0-46
+          linux-headers-3.13.0-46-generic
+          linux-image-3.13.0-29-generic
+          linux-image-3.13.0-45-generic
+          linux-image-3.13.0-46-generic
         })
       end
     end
