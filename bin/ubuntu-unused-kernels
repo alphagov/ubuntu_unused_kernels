@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'ubuntu_unused_kernels'
+puts UbuntuUnusedKernels.to_remove.join("\n")
