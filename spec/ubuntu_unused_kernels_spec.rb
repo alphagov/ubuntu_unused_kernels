@@ -20,23 +20,25 @@ describe UbuntuUnusedKernels do
     end
 
     describe 'five kernels installed' do
-      let(:installed) { %w{
-        linux-headers-3.13.0-39
-        linux-headers-3.13.0-39-generic
-        linux-headers-3.13.0-40
-        linux-headers-3.13.0-40-generic
-        linux-headers-3.13.0-41
-        linux-headers-3.13.0-41-generic
-        linux-headers-3.13.0-42
-        linux-headers-3.13.0-42-generic
-        linux-headers-3.13.0-43
-        linux-headers-3.13.0-43-generic
-        linux-image-3.13.0-39-generic
-        linux-image-3.13.0-40-generic
-        linux-image-3.13.0-41-generic
-        linux-image-3.13.0-42-generic
-        linux-image-3.13.0-43-generic
-      }}
+      let(:installed) {
+        %w{
+          linux-headers-3.13.0-39
+          linux-headers-3.13.0-39-generic
+          linux-headers-3.13.0-40
+          linux-headers-3.13.0-40-generic
+          linux-headers-3.13.0-41
+          linux-headers-3.13.0-41-generic
+          linux-headers-3.13.0-42
+          linux-headers-3.13.0-42-generic
+          linux-headers-3.13.0-43
+          linux-headers-3.13.0-43-generic
+          linux-image-3.13.0-39-generic
+          linux-image-3.13.0-40-generic
+          linux-image-3.13.0-41-generic
+          linux-image-3.13.0-42-generic
+          linux-image-3.13.0-43-generic
+        }
+      }
 
       describe 'current is latest' do
         it 'should return everything except current/latest' do
