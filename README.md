@@ -1,6 +1,8 @@
-# UbuntuUnusedKernels
+# ubuntu-unused-kernels
 
-TODO: Write a gem description
+Identify old kernel packages that can be deleted from Ubuntu machines. It
+will omit the currently running kernel and the latest kernel that would be
+used if the machine was rebooted.
 
 ## Installation
 
@@ -18,11 +20,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```
+sudo apt-get purge $(ubuntu-unused-kernels)
+```
 
 ## Contributing
 
-1. Fork it ( http://github.com/<my-github-username>/ubuntu_unused_kernels/fork )
+1. Fork it ( http://github.com/gds-operations/ubuntu_unused_kernels/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
