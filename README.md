@@ -18,6 +18,10 @@ Or install it yourself as:
 
     $ gem install ubuntu_unused_kernels
 
+## Requires
+
+Ruby v1.9 or later
+
 ## Usage
 
 ```
