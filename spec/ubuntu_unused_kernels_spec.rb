@@ -19,6 +19,22 @@ describe UbuntuUnusedKernels do
       end
     end
 
+    describe 'two kernels installed, one is current and latest' do
+      it 'should return nothing' do
+        allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-43')
+        allow(subject).to receive(:get_installed).with(no_args).and_return(%w{
+          linux-headers-3.13.0-42
+          linux-headers-3.13.0-42-generic
+          linux-headers-3.13.0-43
+          linux-headers-3.13.0-43-generic
+          linux-image-3.13.0-42-generic
+          linux-image-3.13.0-43-generic
+        })
+
+        expect(subject.to_remove).to eq([])
+      end
+    end
+
     describe 'five kernels installed' do
       let(:installed) {
         %w{
@@ -41,7 +57,7 @@ describe UbuntuUnusedKernels do
       }
 
       describe 'current is latest' do
-        it 'should return everything except current/latest' do
+        it 'should return everything except two latest (which includes current)' do
           allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-43')
           allow(subject).to receive(:get_installed).with(no_args).and_return(installed)
 
@@ -52,18 +68,15 @@ describe UbuntuUnusedKernels do
             linux-headers-3.13.0-40-generic
             linux-headers-3.13.0-41
             linux-headers-3.13.0-41-generic
-            linux-headers-3.13.0-42
-            linux-headers-3.13.0-42-generic
             linux-image-3.13.0-39-generic
             linux-image-3.13.0-40-generic
             linux-image-3.13.0-41-generic
-            linux-image-3.13.0-42-generic
           })
         end
       end
 
       describe 'current is not latest' do
-        it 'should return everything except current and latest' do
+        it 'should return everything except current and two latest' do
           allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-41')
           allow(subject).to receive(:get_installed).with(no_args).and_return(installed)
 
@@ -72,17 +85,14 @@ describe UbuntuUnusedKernels do
             linux-headers-3.13.0-39-generic
             linux-headers-3.13.0-40
             linux-headers-3.13.0-40-generic
-            linux-headers-3.13.0-42
-            linux-headers-3.13.0-42-generic
             linux-image-3.13.0-39-generic
             linux-image-3.13.0-40-generic
-            linux-image-3.13.0-42-generic
           })
         end
       end
 
       describe 'unsorted list of kernels' do
-        it 'should return everything except current and latest' do
+        it 'should return everything except current and two latest' do
           allow(subject).to receive(:get_current).with(no_args).and_return('3.13.0-41')
           allow(subject).to receive(:get_installed).with(no_args).and_return(installed.shuffle)
 
@@ -91,11 +101,8 @@ describe UbuntuUnusedKernels do
             linux-headers-3.13.0-39-generic
             linux-headers-3.13.0-40
             linux-headers-3.13.0-40-generic
-            linux-headers-3.13.0-42
-            linux-headers-3.13.0-42-generic
             linux-image-3.13.0-39-generic
             linux-image-3.13.0-40-generic
-            linux-image-3.13.0-42-generic
           })
         end
       end
