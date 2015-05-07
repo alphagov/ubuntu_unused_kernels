@@ -1,2 +1,5 @@
+2015-05-07 Release 0.2.0
+- Keep two latest kernels instead of just one
+
 2015-04-01 Release 0.1.0
 - Initial release ported from internal repository
