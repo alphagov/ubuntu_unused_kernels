@@ -12,11 +12,12 @@ module UbuntuUnusedKernels
 
       latest = packages.map { |package|
         package.match(VERSION_REGEX)[0]
-      }.sort.last
+      }.uniq.sort.last(2)
 
-      packages.reject! { |package|
-        package =~ /\b#{Regexp.escape(current)}\b/ ||
-        package =~ /\b#{Regexp.escape(latest)}\b/
+      [current, latest].flatten.each { |version|
+        packages.reject! { |package|
+          package =~ /\b#{Regexp.escape(version)}\b/
+        }
       }
 
       return packages
