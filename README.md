@@ -1,5 +1,7 @@
 # ubuntu-unused-kernels
 
+**This project was archived in October 2022 and is no longer maintained.**
+
 Identify old kernel packages that can be deleted from Ubuntu machines. It
 will omit the currently running kernel and the latest kernel that would be
 used if the machine was rebooted.
